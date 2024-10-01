@@ -1,0 +1,4 @@
+output_folder: testing_pipeline
+original_analysis_folder: /nfs/jbailey5/baileyweb/asimkin/pf_SMARRT_methods/alfred_admin/seekdeep_outputs/controls_0.5/controls_0.5_output/analysis
+genomes: /nfs/jbailey5/baileyweb/asimkin/other_people/jmsadler/bigv10ctrl/examine_haplotypes/genomes
+count_file: /nfs/jbailey5/baileyweb/asimkin/pf_SMARRT_methods/alfred_admin/seekdeep_graphs/controls_0.5_output/read_dict.yaml
