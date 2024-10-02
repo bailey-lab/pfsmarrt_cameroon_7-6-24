@@ -4,7 +4,7 @@ create S8B. Jacob's parasitemia spreadsheet is from here:
 https://docs.google.com/spreadsheets/d/1BSyIwm7JbqAniuAfz36fX7m14QlFl6lu/edit?
 gid=873760498#gid=873760498
 '''
-output_folder='better_log_scale'
+output_folder='supplemental_figures'
 parasitemia_values=('/nfs/jbailey5/baileyweb/asimkin/pf_SMARRT_methods/alfred_'
 	'admin/pfsmarrt_github/field_data/Full_data_Cameroon-DSG2020_Speciation_'
 	'Summary.tsv')
@@ -44,23 +44,12 @@ def graph_db():
 		y_values.append(float(parasitemia_dict[sample]))
 		categories.append(completeness_dict[sample])
 	data={'categories': categories, 'samples': sorted_samples, 'log10 parasitemia': log_y_values}
-	sd_dict={}
-	for category_number, category in enumerate(categories):
-		sd_dict.setdefault(category, []).append(y_values[category_number])
-	cat_list, mean_list, stdev_list=[],[],[]
-	for category in sd_dict:
-		mean=round(statistics.mean(sd_dict[category]), 3)
-		stdev=round(statistics.stdev(sd_dict[category]), 3)
-		print(category, mean, stdev)
-		mean_list.append(math.log(mean, 10))
-		cat_list.append(category)
-		stdev_list.append(math.log(stdev, 10))
 	write_table(data, f'{output_folder}/S8B_parasitemia_by_completeness.tsv')
 	df = pd.DataFrame(data)
 #	fig=px.strip(df, hover_data=['samples']).update_traces(jitter = 1).update_traces(marker=dict(color='black'))
 	fig=px.strip(df, x='categories', y='log10 parasitemia', hover_data=['samples']).update_traces(marker=dict(color='black'))
-	#dm = df.groupby('categories').mean(numeric_only=True)
-	#ds = df.groupby('categories').std(numeric_only=True)
+	dm = df.groupby('categories').mean(numeric_only=True)
+	ds = df.groupby('categories').std(numeric_only=True)
 	#need to manually take log of non-log means and standard deviations here
 	#print('dm is', dm)
 	#print('ds is', ds)
@@ -68,8 +57,8 @@ def graph_db():
 	#use plotly express to create a scatterplot of error bars, and update all
 	#traces to be red
 	
-	fig.add_scatter(x=cat_list, y=mean_list, 
-		error_y_array=stdev_list,
+	fig.add_scatter(x=dm.index, y=dm['log10 parasitemia'], 
+		error_y_array=ds['log10 parasitemia'],
         	mode='markers', showlegend=False, fillcolor='red')
 	#fig.update_traces(marker=dict(color='red'))
 	fig.write_html(f'{output_folder}/S8B_parasitemia_by_completeness.html')
